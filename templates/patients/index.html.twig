@@ -1,0 +1,17 @@
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Birth date</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for person in people %}
+        <tr>
+            <td>{{ person['name'] }}</td>
+            <td>{{ person['birth_date'] }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
