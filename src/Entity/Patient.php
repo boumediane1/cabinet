@@ -3,46 +3,22 @@
 namespace App\Entity;
 
 use App\Repository\PatientRepository;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PatientRepository::class)]
-class Patient
+class Patient extends User
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $birth_date = null;
+    private ?DateTime $birth_date = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getBirthDate(): ?\DateTime
+    public function getBirthDate(): ?DateTime
     {
         return $this->birth_date;
     }
 
-    public function setBirthDate(\DateTime $birth_date): static
+    public function setBirthDate(DateTime $birth_date): static
     {
         $this->birth_date = $birth_date;
 
