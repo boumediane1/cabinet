@@ -7,10 +7,10 @@
     </thead>
 
     <tbody>
-    {% for person in people %}
+    {% for patient in patients %}
         <tr>
-            <td>{{ person['name'] }}</td>
-            <td>{{ person['birth_date'] }}</td>
+            <td>{{ patient.name }}</td>
+            <td>{{ patient.birthDate.format('Y/m/d') }}</td>
         </tr>
     {% endfor %}
     </tbody>
