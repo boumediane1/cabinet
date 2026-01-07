@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Appointment;
+use App\Entity\Doctor;
+use App\Entity\Speciality;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+final class AppointmentController extends AbstractController
+{
+    #[Route('/appointments', name: 'app_appointments.index')]
+    public function index(EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser(); // current authenticated user
+
+        $appointments = $entityManager
+            ->getRepository(Appointment::class)
+            ->findBy(['patient' => $user]);
+
+        return $this->render('appointments/index.html.twig', [
+            'appointments' => $appointments,
+        ]);
+    }
+
+    #[Route('/appointments/create', name: 'app_appointments.create')]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $appointment = new Appointment();
+
+        $form = $this->createFormBuilder($appointment)
+            ->add('time', DateTimeType::class)
+            ->add('speciality', EntityType::class, [
+                'class' => Speciality::class,
+                'choice_label' => 'title',
+            ])
+            ->add('doctor', EntityType::class, [
+                'class' => Doctor::class,
+                'choice_label' => 'name',
+            ])
+            ->add('schedule', SubmitType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $appointment->setPatient($this->getUser());
+
+            $entityManager->persist($appointment);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_appointments.index');
+        }
+
+        return $this->render('appointments/create.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/appointments/{id}/edit', name: 'app_appointments.edit')]
+    public function edit(
+        Appointment $appointment,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
+        if ($appointment->getPatient() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if ($appointment->isConfirmed()) {
+            throw $this->createAccessDeniedException('Confirmed appointments cannot be edited.');
+        }
+
+        $form = $this->createFormBuilder($appointment)
+            ->add('time', DateTimeType::class)
+            ->add('speciality', EntityType::class, [
+                'class' => Speciality::class,
+                'choice_label' => 'title',
+            ])
+            ->add('doctor', EntityType::class, [
+                'class' => Doctor::class,
+                'choice_label' => 'name',
+            ])
+            ->add('save', SubmitType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_appointments.index');
+        }
+
+        return $this->render('appointments/edit.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/appointments/{id}', name: 'app_appointments.delete', methods: ['POST'])]
+    public function delete(
+        Appointment $appointment,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
+        if ($appointment->getPatient() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if ($appointment->isConfirmed()) {
+            throw $this->createAccessDeniedException('Confirmed appointments cannot be deleted.');
+        }
+
+        if ($this->isCsrfTokenValid(
+            'delete' . $appointment->getId(),
+            $request->request->get('_token')
+        )) {
+            $entityManager->remove($appointment);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_appointments.index');
+    }
+}

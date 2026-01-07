@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/register')]
+    #[Route('/register', name: 'app_register')]
     public function register(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $patient = new Patient();
@@ -44,9 +44,13 @@ class RegistrationController extends AbstractController
         if ($form->isSubmitted()) {
             $hashedPassword = $passwordHasher->hashPassword($patient, $patient->getPassword());
             $patient->setPassword($hashedPassword);
+
+            $patient->setRoles(['ROLE_PATIENT']);
+
             $entityManager->persist($patient);
             $entityManager->flush();
-            dd('Patient account created successfully!');
+
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('register.html.twig', [

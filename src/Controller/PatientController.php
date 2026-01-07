@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class PatientController extends AbstractController
 {
-    #[Route('/patients', name: 'patients.index')]
+    #[Route('/patients', name: 'app_patients.index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $patients = $entityManager->getRepository(Patient::class)->findAll();
