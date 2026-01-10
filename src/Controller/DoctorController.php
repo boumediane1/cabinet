@@ -71,7 +71,7 @@ class DoctorController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            return $this->redirectToRoute('doctors.index');
+            return $this->redirectToRoute('app_doctors.index');
         }
 
         return $this->render('doctors/edit.html.twig', [
@@ -91,6 +91,6 @@ class DoctorController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('doctors.index');
+        return $this->redirectToRoute('app_doctors.index');
     }
 }

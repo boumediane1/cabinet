@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Appointment;
 use App\Entity\Doctor;
 use App\Entity\Speciality;
+use App\Form\AppointmentType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,17 +43,7 @@ final class AppointmentController extends AbstractController
     {
         $appointment = new Appointment();
 
-        $form = $this->createFormBuilder($appointment)
-            ->add('time', DateTimeType::class)
-            ->add('speciality', EntityType::class, [
-                'class' => Speciality::class,
-                'choice_label' => 'title',
-            ])
-            ->add('doctor', EntityType::class, [
-                'class' => Doctor::class,
-                'choice_label' => 'name',
-            ])
-            ->getForm();
+        $form = $this->createForm(AppointmentType::class, $appointment);
 
         $form->handleRequest($request);
 
@@ -85,17 +76,7 @@ final class AppointmentController extends AbstractController
             throw $this->createAccessDeniedException('Confirmed appointments cannot be edited.');
         }
 
-        $form = $this->createFormBuilder($appointment)
-            ->add('time', DateTimeType::class)
-            ->add('speciality', EntityType::class, [
-                'class' => Speciality::class,
-                'choice_label' => 'title',
-            ])
-            ->add('doctor', EntityType::class, [
-                'class' => Doctor::class,
-                'choice_label' => 'name',
-            ])
-            ->getForm();
+        $form = $this->createForm(AppointmentType::class, $appointment);
 
         $form->handleRequest($request);
 
@@ -130,6 +111,24 @@ final class AppointmentController extends AbstractController
             $request->request->get('_token')
         )) {
             $entityManager->remove($appointment);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_appointments.index');
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/appointments/{id}/confirm', name: 'app_appointments.confirm', methods: ['POST'])]
+    public function confirm(
+        Appointment $appointment,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
+        if ($this->isCsrfTokenValid(
+            'confirm' . $appointment->getId(),
+            $request->request->get('_token')
+        )) {
+            $appointment->setConfirmed(true);
             $entityManager->flush();
         }
 

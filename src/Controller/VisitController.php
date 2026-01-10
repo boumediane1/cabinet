@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Visit;
 use App\Entity\Doctor;
+use App\Form\VisitType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -46,17 +47,8 @@ final class VisitController extends AbstractController
     {
         $visit = new Visit();
 
-        $form = $this->createFormBuilder($visit)
-            ->add('time', DateTimeType::class)
-            ->add('doctor', EntityType::class, [
-                'class' => Doctor::class,
-                'choice_label' => 'name',
-            ])
-            ->add('patient', EntityType::class, [
-                'class' => \App\Entity\Patient::class,
-                'choice_label' => 'name',
-            ])
-            ->getForm();
+
+        $form = $this->createForm(VisitType::class, $visit);
 
         $form->handleRequest($request);
 
@@ -80,17 +72,7 @@ final class VisitController extends AbstractController
         Request $request,
         EntityManagerInterface $em
     ): Response {
-        $form = $this->createFormBuilder($visit)
-            ->add('time', DateTimeType::class)
-            ->add('doctor', EntityType::class, [
-                'class' => Doctor::class,
-                'choice_label' => 'name',
-            ])
-            ->add('patient', EntityType::class, [
-                'class' => \App\Entity\Patient::class,
-                'choice_label' => 'name',
-            ])
-            ->getForm();
+        $form = $this->createForm(VisitType::class, $visit);
 
         $form->handleRequest($request);
 

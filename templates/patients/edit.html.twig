@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{% form_theme form 'tailwind_2_layout.html.twig' %}
+
+    <div class="max-w-xl mx-auto mt-8 bg-white p-6 rounded-lg shadow">
+    <h1 class="text-xl font-semibold mb-4">Edit Patient</h1>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    <div class="mt-4 flex justify-end">
+        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Update
+        </button>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

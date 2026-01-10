@@ -24,7 +24,7 @@
                     <th class="px-4 py-3">Time</th>
                     <th class="px-4 py-3">Confirmation</th>
 
-                    {% if is_granted('ROLE_PATIENT') %}
+                    {% if is_granted('ROLE_PATIENT') or is_granted('ROLE_ADMIN') %}
                         <th class="px-4 py-3 text-right">Actions</th>
                     {% endif %}
                 </tr>
@@ -49,7 +49,34 @@
                             {% endif %}
                         </td>
 
-                        {% if is_granted('ROLE_PATIENT') %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <td class="px-4 py-3 text-right">
+                                {% if not appointment.confirmed %}
+                                    <form
+                                        method="post"
+                                        action="{{ path('app_appointments.confirm', { id: appointment.id }) }}"
+                                        class="inline"
+                                        onsubmit="return confirm('Are you sure you want to confirm this appointment?');"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token('confirm' ~ appointment.id) }}"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="inline-flex items-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 transition"
+                                        >
+                                            Confirm
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-gray-400">—</span>
+                                {% endif %}
+                            </td>
+
+                        {% elseif is_granted('ROLE_PATIENT') %}
                             <td class="px-4 py-3 text-right space-x-2">
                                 {% if not appointment.confirmed %}
                                     <a
@@ -65,7 +92,8 @@
                                         class="inline"
                                         onsubmit="return confirm('Are you sure you want to delete this appointment?');"
                                     >
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ appointment.id) }}">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('delete' ~ appointment.id) }}">
                                         <button type="submit" class="text-red-600 hover:underline">
                                             Delete
                                         </button>
