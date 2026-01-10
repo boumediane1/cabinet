@@ -1,0 +1,90 @@
+{% set currentRoute = app.request.attributes.get('_route') %}
+
+<nav class="bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex h-16 items-center justify-between">
+
+            {# User identity #}
+            <div class="shrink-0">
+                {% if app.user %}
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-800">
+                            {{ app.user.name }}
+                        </span>
+                        <span class="text-xs text-gray-500">
+                            {{ app.user.roles[0]|replace({'ROLE_': ''})|lower|capitalize }}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Navigation + logout #}
+            <div class="flex items-center space-x-6">
+
+                {# Appointments #}
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PATIENT') or is_granted('ROLE_DOCTOR') %}
+                    <a
+                        href="{{ path('app_appointments.index') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium
+                            {{ currentRoute starts with 'app_appointments'
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}"
+                    >
+                        Appointments
+                    </a>
+                {% endif %}
+
+                {# Visits #}
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PATIENT') or is_granted('ROLE_DOCTOR') %}
+                    <a
+                        href="{{ path('app_visits.index') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium
+                            {{ currentRoute starts with 'app_visits'
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}"
+                    >
+                        Visits
+                    </a>
+                {% endif %}
+
+                {# Admin-only #}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a
+                        href="{{ path('app_patients.index') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium
+                            {{ currentRoute starts with 'app_patients'
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}"
+                    >
+                        Patients
+                    </a>
+
+                    <a
+                        href="{{ path('app_doctors.index') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium
+                            {{ currentRoute starts with 'app_doctors'
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}"
+                    >
+                        Doctors
+                    </a>
+                {% endif %}
+
+                {# Divider #}
+                <span class="h-6 w-px bg-gray-200"></span>
+
+                {# Logout #}
+                <form method="post" action="{{ path('app_logout') }}">
+                    <button
+                        type="submit"
+                        class="rounded-md bg-red-50 px-3 py-2 text-sm font-medium text-red-600
+                               hover:bg-red-100 hover:text-red-700 transition"
+                    >
+                        Logout
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,23 +1,36 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<a href="/patients/create">Add new patient</a>
+    <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Birth date</th>
-    </tr>
-    </thead>
+        <div class="flex justify-end">
+            <a
+                href="/register"
+                class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
+            >
+                Add new patient
+            </a>
+        </div>
 
-    <tbody>
-    {% for patient in patients %}
-        <tr>
-            <td>{{ patient.name }}</td>
-            <td>{{ patient.birthDate.format('Y/m/d') }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+        <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50 text-left font-semibold text-gray-600">
+                <tr>
+                    <th class="px-4 py-3">Name</th>
+                    <th class="px-4 py-3">Birth date</th>
+                </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-100">
+                {% for patient in patients %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3">{{ patient.name }}</td>
+                        <td class="px-4 py-3">{{ patient.birthDate.format('Y/m/d') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 {% endblock %}

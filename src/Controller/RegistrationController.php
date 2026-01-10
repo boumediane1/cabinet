@@ -36,19 +36,25 @@ class RegistrationController extends AbstractController
             ])
             ->add('birth_date', DateType::class)
             ->add('address', TextareaType::class)
-            ->add('save', SubmitType::class, ['label' => 'Register patient'])
             ->getForm();
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            $hashedPassword = $passwordHasher->hashPassword($patient, $patient->getPassword());
-            $patient->setPassword($hashedPassword);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $hashedPassword = $passwordHasher->hashPassword(
+                $patient,
+                $patient->getPassword()
+            );
 
+            $patient->setPassword($hashedPassword);
             $patient->setRoles(['ROLE_PATIENT']);
 
             $entityManager->persist($patient);
             $entityManager->flush();
+
+            if ($this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('app_patients.index');
+            }
 
             return $this->redirectToRoute('app_login');
         }

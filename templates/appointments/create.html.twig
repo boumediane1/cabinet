@@ -1,3 +1,30 @@
-create appointment form
+{% extends 'base.html.twig' %}
 
-{{ form(form) }}
+{% block body %}
+    {% form_theme form 'tailwind_2_layout.html.twig' %}
+
+    <div class="mt-8 flex justify-center px-4">
+        <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-md">
+            <h1 class="mb-6 text-center text-2xl font-semibold text-gray-800">
+                Create Appointment
+            </h1>
+
+            {{ form_start(form, { attr: { class: 'space-y-4' } }) }}
+
+            {{ form_row(form.time) }}
+            {{ form_row(form.speciality) }}
+            {{ form_row(form.doctor) }}
+
+            <button
+                type="submit"
+                class="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white
+                           hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500
+                           focus:ring-offset-2 transition"
+            >
+                Schedule
+            </button>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

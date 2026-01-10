@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+        <div class="flex items-center justify-between">
+            <h1 class="text-xl font-semibold text-gray-800">Visits</h1>
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <a
+                    href="{{ path('app_visits.create') }}"
+                    class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
+                >
+                    Create Visit
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50 text-left font-semibold text-gray-600">
+                <tr>
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_DOCTOR') %}
+                        <th class="px-4 py-3">Patient</th>
+                    {% endif %}
+                    <th class="px-4 py-3">Doctor</th>
+                    <th class="px-4 py-3">Time</th>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <th class="px-4 py-3 text-right">Actions</th>
+                    {% endif %}
+                </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-100">
+                {% for visit in visits %}
+                    <tr class="hover:bg-gray-50">
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_DOCTOR') %}
+                            <td class="px-4 py-3">{{ visit.patient.name }}</td>
+                        {% endif %}
+                        <td class="px-4 py-3">{{ visit.doctor.name }}</td>
+                        <td class="px-4 py-3">{{ visit.time|date('Y-m-d H:i') }}</td>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <td class="px-4 py-3 text-right space-x-2">
+                                <a href="{{ path('app_visits.edit', { id: visit.id }) }}" class="text-blue-600 hover:underline">
+                                    Edit
+                                </a>
+
+                                <form
+                                    method="post"
+                                    action="{{ path('app_visits.delete', { id: visit.id }) }}"
+                                    class="inline"
+                                    onsubmit="return confirm('Delete this visit?');"
+                                >
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ visit.id) }}">
+                                    <button type="submit" class="text-red-600 hover:underline">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="px-4 py-6 text-center text-gray-500">
+                            No visits found.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+{% endblock %}

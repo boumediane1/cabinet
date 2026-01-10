@@ -13,17 +13,23 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class AppointmentController extends AbstractController
 {
     #[Route('/appointments', name: 'app_appointments.index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $user = $this->getUser(); // current authenticated user
+        $user = $this->getUser();
+        $repo = $entityManager->getRepository(Appointment::class);
 
-        $appointments = $entityManager
-            ->getRepository(Appointment::class)
-            ->findBy(['patient' => $user]);
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $appointments = $repo->findAll();
+        } elseif ($this->isGranted('ROLE_DOCTOR')) {
+            $appointments = $repo->findBy(['doctor' => $user]);
+        } else { // ROLE_PATIENT
+            $appointments = $repo->findBy(['patient' => $user]);
+        }
 
         return $this->render('appointments/index.html.twig', [
             'appointments' => $appointments,
@@ -31,6 +37,7 @@ final class AppointmentController extends AbstractController
     }
 
     #[Route('/appointments/create', name: 'app_appointments.create')]
+    #[IsGranted('ROLE_PATIENT')]
     public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
         $appointment = new Appointment();
@@ -45,7 +52,6 @@ final class AppointmentController extends AbstractController
                 'class' => Doctor::class,
                 'choice_label' => 'name',
             ])
-            ->add('schedule', SubmitType::class)
             ->getForm();
 
         $form->handleRequest($request);
@@ -66,10 +72,11 @@ final class AppointmentController extends AbstractController
 
     #[Route('/appointments/{id}/edit', name: 'app_appointments.edit')]
     public function edit(
-        Appointment $appointment,
-        Request $request,
+        Appointment            $appointment,
+        Request                $request,
         EntityManagerInterface $entityManager
-    ): Response {
+    ): Response
+    {
         if ($appointment->getPatient() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
@@ -88,7 +95,6 @@ final class AppointmentController extends AbstractController
                 'class' => Doctor::class,
                 'choice_label' => 'name',
             ])
-            ->add('save', SubmitType::class)
             ->getForm();
 
         $form->handleRequest($request);
@@ -106,10 +112,11 @@ final class AppointmentController extends AbstractController
 
     #[Route('/appointments/{id}', name: 'app_appointments.delete', methods: ['POST'])]
     public function delete(
-        Appointment $appointment,
-        Request $request,
+        Appointment            $appointment,
+        Request                $request,
         EntityManagerInterface $entityManager
-    ): Response {
+    ): Response
+    {
         if ($appointment->getPatient() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
