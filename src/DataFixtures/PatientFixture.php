@@ -21,7 +21,7 @@ class PatientFixture extends Fixture
     {
         $faker = Factory::create('en_US');
 
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $patient = new Patient();
 
             $patient->setUsername($faker->unique()->userName());
@@ -30,7 +30,7 @@ class PatientFixture extends Fixture
 
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $patient,
-                'password123'
+                'password'
             );
             $patient->setPassword($hashedPassword);
 

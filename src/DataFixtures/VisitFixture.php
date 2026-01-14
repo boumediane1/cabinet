@@ -16,7 +16,7 @@ class VisitFixture extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
 
-        for ($i = 1; $i <= 50; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $visit = new Visit();
 
             $visit->setTime(
@@ -24,11 +24,11 @@ class VisitFixture extends Fixture implements DependentFixtureInterface
             );
 
             $visit->setPatient(
-                $this->getReference('patient_' . $faker->numberBetween(1, 20), Patient::class)
+                $this->getReference('patient_' . $faker->numberBetween(1, 5), Patient::class)
             );
 
             $visit->setDoctor(
-                $this->getReference('doctor_' . $faker->numberBetween(1, 10), Doctor::class)
+                $this->getReference('doctor_' . $faker->numberBetween(1, 5), Doctor::class)
             );
 
             $manager->persist($visit);

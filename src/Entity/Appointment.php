@@ -22,11 +22,11 @@ class Appointment
     private ?Speciality $speciality = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Doctor $doctor = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Patient $patient = null;
 
     #[ORM\Column(type: Types::BOOLEAN)]
@@ -83,9 +83,11 @@ class Appointment
         return $this->patient;
     }
 
-    public function setPatient(?Patient $patient): void
+    public function setPatient(?Patient $patient): static
     {
         $this->patient = $patient;
+
+        return $this;
     }
 
     public function isConfirmed(): bool

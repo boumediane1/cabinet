@@ -2,22 +2,25 @@
 
 {% block body %}
     <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-xl font-semibold text-gray-800">Appointments</h1>
 
-        {% if is_granted('ROLE_PATIENT') %}
-            <div class="flex justify-end">
-                <a
-                    href="{{ path('app_appointments.create') }}"
-                    class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
-                >
-                    Schedule appointment
-                </a>
-            </div>
-        {% endif %}
+            {% if is_granted('ROLE_PATIENT') %}
+                <div class="flex justify-end">
+                    <a
+                        href="{{ path('app_appointments.create') }}"
+                        class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
+                    >
+                        Schedule appointment
+                    </a>
+                </div>
+            {% endif %}
+        </div>
 
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="bg-gray-50">
-                <tr class="text-left font-semibold text-gray-600">
+                <thead class="bg-gray-400">
+                <tr class="text-left font-semibold text-gray-50">
                     <th class="px-4 py-3">Patient</th>
                     <th class="px-4 py-3">Speciality</th>
                     <th class="px-4 py-3">Doctor</th>

@@ -1,90 +1,145 @@
 {% set currentRoute = app.request.attributes.get('_route') %}
 
-<nav class="bg-white border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex h-16 items-center justify-between">
+<nav class="relative bg-green-900">
+    <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div class="relative flex h-16 items-center justify-between">
 
-            {# User identity #}
-            <div class="shrink-0">
+            {# Mobile menu button #}
+            <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                <button
+                    type="button"
+                    command="--toggle"
+                    commandfor="mobile-menu"
+                    class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white focus:outline-2 focus:-outline-offset-1 focus:outline-indigo-500"
+                >
+                    <span class="sr-only">Open main menu</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                         class="size-6 in-aria-expanded:hidden">
+                        <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                         class="size-6 not-in-aria-expanded:hidden">
+                        <path d="M6 18 18 6M6 6l12 12"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            {# Left: user identity #}
+            <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 {% if app.user %}
-                    <div class="flex flex-col">
-                        <span class="text-sm font-semibold text-gray-800">
+                    <div class="hidden sm:flex flex-col text-white">
+                        <span class="text-sm font-semibold">
                             {{ app.user.name }}
                         </span>
-                        <span class="text-xs text-gray-500">
+                        <span class="text-xs text-gray-400">
                             {{ app.user.roles[0]|replace({'ROLE_': ''})|lower|capitalize }}
                         </span>
                     </div>
                 {% endif %}
+
+                {# Desktop navigation #}
+                <div class="hidden sm:ml-6 sm:block">
+                    <div class="flex space-x-4">
+
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PATIENT') or is_granted('ROLE_DOCTOR') %}
+                            <a href="{{ path('app_appointments.index') }}"
+                               class="rounded-md px-3 py-2 text-sm font-medium
+                               {{ currentRoute starts with 'app_appointments'
+                               ? 'bg-green-700 text-white'
+                               : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                                Appointments
+                            </a>
+
+                            <a href="{{ path('app_visits.index') }}"
+                               class="rounded-md px-3 py-2 text-sm font-medium
+                               {{ currentRoute starts with 'app_visits'
+                               ? 'bg-green-700 text-white'
+                               : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                                Visits
+                            </a>
+                        {% endif %}
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_patients.index') }}"
+                               class="rounded-md px-3 py-2 text-sm font-medium
+                               {{ currentRoute starts with 'app_patients'
+                               ? 'bg-green-700 text-white'
+                               : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                                Patients
+                            </a>
+
+                            <a href="{{ path('app_doctors.index') }}"
+                               class="rounded-md px-3 py-2 text-sm font-medium
+                               {{ currentRoute starts with 'app_doctors'
+                               ? 'bg-green-700 text-white'
+                               : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                                Doctors
+                            </a>
+                        {% endif %}
+
+                    </div>
+                </div>
             </div>
 
-            {# Navigation + logout #}
-            <div class="flex items-center space-x-6">
-
-                {# Appointments #}
-                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PATIENT') or is_granted('ROLE_DOCTOR') %}
-                    <a
-                        href="{{ path('app_appointments.index') }}"
-                        class="px-3 py-2 rounded-md text-sm font-medium
-                            {{ currentRoute starts with 'app_appointments'
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}"
-                    >
-                        Appointments
-                    </a>
-                {% endif %}
-
-                {# Visits #}
-                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PATIENT') or is_granted('ROLE_DOCTOR') %}
-                    <a
-                        href="{{ path('app_visits.index') }}"
-                        class="px-3 py-2 rounded-md text-sm font-medium
-                            {{ currentRoute starts with 'app_visits'
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}"
-                    >
-                        Visits
-                    </a>
-                {% endif %}
-
-                {# Admin-only #}
-                {% if is_granted('ROLE_ADMIN') %}
-                    <a
-                        href="{{ path('app_patients.index') }}"
-                        class="px-3 py-2 rounded-md text-sm font-medium
-                            {{ currentRoute starts with 'app_patients'
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}"
-                    >
-                        Patients
-                    </a>
-
-                    <a
-                        href="{{ path('app_doctors.index') }}"
-                        class="px-3 py-2 rounded-md text-sm font-medium
-                            {{ currentRoute starts with 'app_doctors'
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}"
-                    >
-                        Doctors
-                    </a>
-                {% endif %}
-
-                {# Divider #}
-                <span class="h-6 w-px bg-gray-200"></span>
-
-                {# Logout #}
+            {# Right: logout button (replaces icon + avatar) #}
+            <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <form method="post" action="{{ path('app_logout') }}">
                     <button
                         type="submit"
-                        class="rounded-md bg-red-50 px-3 py-2 text-sm font-medium text-red-600
-                               hover:bg-red-100 hover:text-red-700 transition"
+                        class="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white
+                               hover:bg-red-700 transition"
                     >
                         Logout
                     </button>
                 </form>
-
             </div>
         </div>
     </div>
+
+    {# Mobile menu #}
+    <el-disclosure id="mobile-menu" hidden class="block sm:hidden">
+        <div class="space-y-1 px-2 pt-2 pb-3">
+
+            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PATIENT') or is_granted('ROLE_DOCTOR') %}
+                <a href="{{ path('app_appointments.index') }}"
+                   class="block rounded-md px-3 py-2 text-base font-medium
+                   {{ currentRoute starts with 'app_appointments'
+                   ? 'bg-green-700 text-white'
+                   : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                    Appointments
+                </a>
+
+                <a href="{{ path('app_visits.index') }}"
+                   class="block rounded-md px-3 py-2 text-base font-medium
+                   {{ currentRoute starts with 'app_visits'
+                   ? 'bg-green-700 text-white'
+                   : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                    Visits
+                </a>
+            {% endif %}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_patients.index') }}"
+                   class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white">
+                    Patients
+                </a>
+
+                <a href="{{ path('app_doctors.index') }}"
+                   class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white">
+                    Doctors
+                </a>
+            {% endif %}
+
+            <form method="post" action="{{ path('app_logout') }}" class="pt-2">
+                <button
+                    type="submit"
+                    class="block w-full rounded-md bg-red-600 px-3 py-2 text-base font-medium text-white hover:bg-red-700"
+                >
+                    Logout
+                </button>
+            </form>
+        </div>
+    </el-disclosure>
 </nav>

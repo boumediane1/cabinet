@@ -2,21 +2,22 @@
 
 {% block body %}
     <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-
-        <div class="flex items-center justify-between">
+        <div class="flex justify-between items-center">
             <h1 class="text-xl font-semibold text-gray-800">Doctors</h1>
 
-            <a
-                href="{{ path('doctors.create') }}"
-                class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
-            >
-                Create new Doctor
-            </a>
+            <div class="flex items-center justify-between">
+                <a
+                    href="{{ path('doctors.create') }}"
+                    class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
+                >
+                    Create new Doctor
+                </a>
+            </div>
         </div>
 
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="bg-gray-50 text-left font-semibold text-gray-600">
+                <thead class="bg-gray-400 text-left font-semibold text-gray-50">
                 <tr>
                     <th class="px-4 py-3">Name</th>
                     <th class="px-4 py-3">Username</th>

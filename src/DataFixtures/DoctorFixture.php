@@ -23,7 +23,7 @@ class DoctorFixture extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
 
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $doctor = new Doctor();
 
             $doctor->setUsername($faker->unique()->userName());
@@ -39,7 +39,7 @@ class DoctorFixture extends Fixture implements DependentFixtureInterface
 
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $doctor,
-                'password123'
+                'password'
             );
             $doctor->setPassword($hashedPassword);
 

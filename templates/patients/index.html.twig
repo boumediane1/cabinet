@@ -2,21 +2,24 @@
 
 {% block body %}
     <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <div class="flex items-center justify-between">
+            <h1 class="text-xl font-semibold text-gray-800">Patients</h1>
 
-        {% if is_granted('ROLE_ADMIN') %}
-            <div class="flex justify-end">
-                <a
-                    href="{{ path('app_register') }}"
-                    class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
-                >
-                    Add new patient
-                </a>
-            </div>
-        {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="flex justify-end">
+                    <a
+                        href="{{ path('app_register') }}"
+                        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
+                    >
+                        Add new patient
+                    </a>
+                </div>
+            {% endif %}
+        </div>
 
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="bg-gray-50 text-left font-semibold text-gray-600">
+                <thead class="bg-gray-400 text-left font-semibold text-gray-50">
                 <tr>
                     <th class="px-4 py-3">Name</th>
                     <th class="px-4 py-3">Birth date</th>
